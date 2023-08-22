@@ -18,7 +18,3 @@ It is also very valuable to say that there are a lot of non-technical conclusion
 ## Results
 
 When the research is complete, a Medium article will be published with the results.
-
-## Screenshots
-
-In constructions
