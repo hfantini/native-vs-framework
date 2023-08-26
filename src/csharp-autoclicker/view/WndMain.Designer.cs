@@ -88,9 +88,7 @@
             this.cmdMouseButton.Items.AddRange(new object[] {
             resources.GetString("cmdMouseButton.Items"),
             resources.GetString("cmdMouseButton.Items1"),
-            resources.GetString("cmdMouseButton.Items2"),
-            resources.GetString("cmdMouseButton.Items3"),
-            resources.GetString("cmdMouseButton.Items4")});
+            resources.GetString("cmdMouseButton.Items2")});
             resources.ApplyResources(this.cmdMouseButton, "cmdMouseButton");
             this.cmdMouseButton.Name = "cmdMouseButton";
             this.cmdMouseButton.SelectedIndexChanged += new System.EventHandler(this.cmdMouseButton_SelectedIndexChanged);
@@ -135,6 +133,7 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
@@ -169,6 +168,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WndMain";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WndMain_FormClosing);
             this.grpConfig.ResumeLayout(false);
             this.grpConfig.PerformLayout();
             this.grpShortcut.ResumeLayout(false);

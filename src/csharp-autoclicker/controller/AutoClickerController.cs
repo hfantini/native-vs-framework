@@ -1,10 +1,8 @@
 ﻿using HFAutoClicker.model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace HFAutoClicker.controller
 {
@@ -15,6 +13,17 @@ namespace HFAutoClicker.controller
         private static AutoClickerController _instance = null;
         private Boolean _isRunning = false;
         private AutoClickerConfiguration _configuration = null;
+        private Thread _thread = null;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+        private const int MOUSEEVENTF_LEFTUP = 0x0004;
+        private const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+        private const int MOUSEEVENTF_MIDDLEUP = 0x0040;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
+        private const int MOUSEEVENTF_RIGHTUP = 0x0010;
 
         public AutoClickerController()
         {
@@ -31,6 +40,45 @@ namespace HFAutoClicker.controller
             }
 
             return AutoClickerController._instance;
+        }
+
+        private void run()
+        {
+            try
+            {
+                while(true)
+                {
+                    if(this.isRunning)
+                    {
+                        uint x = (uint) Cursor.Position.X;
+                        uint y = (uint) Cursor.Position.Y;
+                        uint action = 0;
+
+                        switch(this.configuration.mouseButton)
+                        {
+                            case MouseButton.LEFT:
+                                action = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
+                                break;
+
+                            case MouseButton.MIDDLE:
+                                action = MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MIDDLEUP;
+                                break;
+
+                            case MouseButton.RIGHT:
+                                action = MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP;
+                                break;
+                        }
+
+                        mouse_event(action, x, y, 0, 0);
+
+                        Thread.Sleep(this.configuration.interval);
+                    }
+                }
+            }
+            catch (Exception ex) 
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
         }
 
         public void updateConfiguration(AutoClickerConfiguration value)
@@ -52,17 +100,19 @@ namespace HFAutoClicker.controller
 
         public void start()
         {
-            if(!this._isRunning)
+            if(!isRunning)
             {
-                this._isRunning = true;
+                this._thread = new Thread(this.run);
+                this._thread.Start();
             }
         }
 
         public void stop()
         {
-            if (this._isRunning)
+            if (isRunning)
             {
-                this._isRunning = false;
+                this._thread.Abort();
+                this._thread = null;
             }
         }
 
@@ -70,7 +120,7 @@ namespace HFAutoClicker.controller
 
         public Boolean isRunning
         {
-            get { return _isRunning; }
+            get { return this._thread != null; }
         }
 
         public AutoClickerConfiguration configuration

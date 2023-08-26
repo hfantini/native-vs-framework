@@ -10,8 +10,6 @@ namespace HFAutoClicker.model
     {
         LEFT = 0,
         MIDDLE = 1,
-        RIGHT = 2,
-        MOUSE_4 = 3,
-        MOUSE_5 = 4
+        RIGHT = 2
     }
 }

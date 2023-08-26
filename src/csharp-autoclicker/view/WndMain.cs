@@ -1,9 +1,10 @@
 ﻿using HFAutoClicker.controller;
 using HFAutoClicker.model;
 using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HFAutoClicker.view
 {
@@ -13,6 +14,24 @@ namespace HFAutoClicker.view
 
         private AutoClickerController controller = null;
 
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private const int VK_F9 = 0x78;
+        private const int VK_F10 = 0x79;
+        private IntPtr _hookID = IntPtr.Zero;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)] private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
         // == CONSTRUCTOR(S)
 
         public WndMain()
@@ -21,6 +40,10 @@ namespace HFAutoClicker.view
 
             controller = AutoClickerController.getInstance();
             this.update();
+
+            Process process = Process.GetCurrentProcess();
+            ProcessModule module = process.MainModule;
+            this._hookID = SetWindowsHookEx(WH_KEYBOARD_LL, hookKeyboardProc, GetModuleHandle(module.ModuleName), 0);
         }
 
         // == METHODS
@@ -54,6 +77,27 @@ namespace HFAutoClicker.view
                 btnStart.Enabled = true;
                 btnStop.Enabled = false;
             }
+        }
+
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        public IntPtr hookKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr) WM_KEYDOWN)
+            {
+                int VKCode = Marshal.ReadInt32(lParam);
+
+                if(VKCode == VK_F9)
+                {
+                    this.controller.start();
+                }
+                else if(VKCode == VK_F10)
+                {
+                    this.controller.stop();
+                }
+            }
+
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
         // == EVENTS
@@ -106,6 +150,12 @@ namespace HFAutoClicker.view
 
             this.controller.updateConfiguration(config);
             this.update();
+        }
+
+        private void WndMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.controller.stop();
+            UnhookWindowsHookEx(this._hookID);
         }
     }
 }
