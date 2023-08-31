@@ -448,7 +448,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="mItemAbout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 34</value>
+    <value>270, 34</value>
   </data>
   <data name="mItemAbout.Text" xml:space="preserve">
     <value>About</value>
