@@ -11,6 +11,11 @@ namespace App
 		this->hMenu = NULL;
 	}
 
+	App::View::~View()
+	{
+		this->destroy();
+	}
+
 	std::wstring App::View::getClassName()
 	{
 		return this->className;
@@ -66,6 +71,39 @@ namespace App
 
 			default:
 				return DefWindowProcW(hWnd, message, wParam, lParam);
+		}
+	}
+
+	void App::View::show()
+	{
+		if (this->hWnd)
+		{
+			ShowWindow(this->hWnd, SW_NORMAL);
+		}
+	}
+
+	void App::View::update()
+	{
+		if (this->hWnd)
+		{
+			UpdateWindow(this->hWnd);
+		}
+	}
+
+	void App::View::hide()
+	{
+		if (this->hWnd)
+		{
+			ShowWindow(this->hWnd, SW_HIDE);
+		}
+	}
+
+	void App::View::destroy()
+	{
+		if (this->hWnd)
+		{
+			DestroyMenu(this->hMenu);
+			DestroyWindow(this->hWnd);
 		}
 	}
 }

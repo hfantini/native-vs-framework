@@ -10,6 +10,11 @@ namespace App
 
 	}
 
+	App::WndMain::~WndMain()
+	{
+		this->destroy();
+	}
+
 	void App::WndMain::reg()
 	{
 		const wchar_t* className = this->className.c_str();
@@ -74,20 +79,23 @@ namespace App
 		}
 	}
 
-	void App::WndMain::show()
+	void App::WndMain::destroy()
 	{
-		if (this->hWnd)
-		{
-			ShowWindow(this->hWnd, SW_NORMAL);
-		}
-	}
+		DestroyMenu(this->hMenuHelp);
+		DestroyWindow(this->hWndGroupBoxConfig);
+		DestroyWindow(this->hWndGroupBoxShortcut);
+		DestroyWindow(this->hWndBtnStop);
+		DestroyWindow(this->hWndBtnStart);
+		DestroyWindow(this->hWndLabelShortcutF9);
+		DestroyWindow(this->hWndLabelShortcutF10);
+		DestroyWindow(this->hWndLabelButton);
+		DestroyWindow(this->hWndComboButton);
+		DestroyWindow(this->hWndLabelInterval);
+		DestroyWindow(this->hWndEditInterval);
+		DestroyWindow(this->hWndLabelMS);
+		DestroyWindow(this->hWndHorizontalLine);
 
-	void App::WndMain::update()
-	{
-		if (this->hWnd)
-		{
-			UpdateWindow(this->hWnd);
-		}
+		App::View::destroy();
 	}
 
 	void App::WndMain::openAboutDialog()
@@ -123,7 +131,7 @@ namespace App
 			131,
 			hWnd,
 			NULL,
-			(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
 
@@ -138,7 +146,7 @@ namespace App
 			22,
 			hWnd,
 			NULL,
-			(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
 
@@ -151,6 +159,132 @@ namespace App
 			168,
 			52,
 			22,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndLabelShortcutF9 = CreateWindowExW
+		(
+			NULL,
+			L"STATIC",
+			L"F9 - Start",
+			WS_CHILD | WS_VISIBLE | SS_LEFT | SS_CENTERIMAGE,
+			255,
+			35,
+			80,
+			16,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndLabelShortcutF9 = CreateWindowExW
+		(
+			NULL,
+			L"STATIC",
+			L"F10 - Stop",
+			WS_CHILD | WS_VISIBLE | SS_LEFT | SS_CENTERIMAGE,
+			255,
+			55,
+			80,
+			16, 
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndLabelButton = CreateWindowExW
+		(
+			NULL,
+			L"STATIC",
+			L"Button:",
+			WS_CHILD | WS_VISIBLE | SS_LEFT | SS_CENTERIMAGE,
+			30,
+			35,
+			80,
+			16,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndComboButton = CreateWindowExW(
+			WS_EX_CLIENTEDGE, 
+			L"COMBOBOX",
+			L"Button",
+			CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+			30, 
+			55, 
+			130, 
+			22, 
+			hWnd, 
+			NULL, 
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL);
+
+		this->hWndLabelInterval = CreateWindowExW
+		(
+			NULL,
+			L"STATIC",
+			L"Interval:",
+			WS_CHILD | WS_VISIBLE | SS_LEFT | SS_CENTERIMAGE,
+			30,
+			85,
+			80,
+			16,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndEditInterval = CreateWindowExW
+		(
+			WS_EX_CLIENTEDGE | WS_EX_LEFT | WS_EX_LTRREADING,
+			L"EDIT",
+			L"",
+			ES_LEFT | ES_RIGHT | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+			30,
+			105,
+			70,
+			26,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndLabelMS = CreateWindowExW
+		(
+			NULL,
+			L"STATIC",
+			L"Ms",
+			WS_CHILD | WS_VISIBLE | SS_LEFT | SS_CENTERIMAGE,
+			107,
+			112,
+			80,
+			16,
+			hWnd,
+			NULL,
+			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+			NULL
+		);
+
+		this->hWndHorizontalLine = CreateWindowExW
+		(
+			WS_EX_STATICEDGE,
+			L"STATIC",
+			L"",
+			WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+			10,
+			160,
+			348,
+			2,
 			hWnd,
 			NULL,
 			(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),

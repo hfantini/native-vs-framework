@@ -11,13 +11,14 @@ namespace App
 	{
 		public:
 			View(HINSTANCE hInstance, const LPWSTR className);
+			~View();
 			virtual void reg() {};
 			virtual void createMenu() {};
 			virtual void createWindow() {};
-			virtual void show() {};
-			virtual void update() {};
-			virtual void hide() {};
-			virtual void destroy() {};
+			virtual void show();
+			virtual void update();
+			virtual void hide();
+			virtual void destroy();
 			std::wstring getClassName();
 			HINSTANCE getInstance();
 			HWND getHandle();

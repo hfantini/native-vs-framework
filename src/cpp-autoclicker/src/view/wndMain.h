@@ -5,23 +5,29 @@
 
 namespace App
 {
-	class WndMain : App::View
+	class WndMain : public App::View
 	{
 		public:
 			WndMain(HINSTANCE hInstance);
+			~WndMain();
 			virtual void reg();
 			virtual void createMenu();
 			virtual void createWindow();
-			virtual void show();
-			virtual void update();
-			virtual void hide() {};
-			virtual void destroy() {};
+			virtual void destroy();
 		private:
-			HMENU hMenuHelp;
-			HWND hWndGroupBoxConfig;
-			HWND hWndGroupBoxShortcut;
-			HWND hWndBtnStop;
-			HWND hWndBtnStart;
+			HMENU hMenuHelp = NULL;
+			HWND hWndGroupBoxConfig = NULL;
+			HWND hWndGroupBoxShortcut = NULL;
+			HWND hWndBtnStop = NULL;
+			HWND hWndBtnStart = NULL;
+			HWND hWndLabelShortcutF9 = NULL;
+			HWND hWndLabelShortcutF10 = NULL;
+			HWND hWndLabelButton = NULL;
+			HWND hWndComboButton = NULL;
+			HWND hWndLabelInterval = NULL;
+			HWND hWndEditInterval = NULL;
+			HWND hWndLabelMS = NULL;
+			HWND hWndHorizontalLine = NULL;
 		protected:
 			virtual void createControls(HWND parent);
 			void openAboutDialog();

@@ -23,6 +23,7 @@ int run(HINSTANCE instance)
 			DispatchMessage(&message);
 		}
 
+		wndMain->destroy();
 		return 0;
 	}
 	catch (std::exception e)
