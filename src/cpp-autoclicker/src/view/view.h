@@ -25,6 +25,7 @@ namespace App
 		private:
 		protected:
 			virtual void createControls(HWND parent) {};
+			virtual void updateControls(HWND parent) {};
 			static LRESULT CALLBACK staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 			virtual LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 			std::wstring className;

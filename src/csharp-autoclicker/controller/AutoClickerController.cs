@@ -11,7 +11,6 @@ namespace HFAutoClicker.controller
         // == DECLARATIONS
 
         private static AutoClickerController _instance = null;
-        private Boolean _isRunning = false;
         private AutoClickerConfiguration _configuration = null;
         private Thread _thread = null;
 

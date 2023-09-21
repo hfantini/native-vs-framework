@@ -63,6 +63,7 @@ namespace App
 		{
 			case WM_CREATE:
 				this->createControls(hWnd);
+				this->updateControls(hWnd);
 				break;
 
 			case WM_CLOSE:

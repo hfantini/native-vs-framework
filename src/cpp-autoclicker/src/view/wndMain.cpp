@@ -2,6 +2,7 @@
 #include <sstream>;
 #include "windows.h"
 #include "wndMain.h";
+#include "../controler/AutoClickController.h";
 
 namespace App
 {
@@ -51,7 +52,7 @@ namespace App
 			this->hMenu = CreateMenu();
 			this->hMenuHelp = CreateMenu();
 
-			AppendMenuW(this->hMenuHelp, MF_STRING, 100, L"About");
+			AppendMenuW(this->hMenuHelp, MF_STRING, MNU_ABOUT, L"About");
 			AppendMenuW(this->hMenu, MF_POPUP, (UINT_PTR)this->hMenuHelp, L"Help");
 		}
 	}
@@ -98,11 +99,6 @@ namespace App
 		App::View::destroy();
 	}
 
-	void App::WndMain::openAboutDialog()
-	{
-
-	}
-
 	void App::WndMain::createControls(HWND hWnd)
 	{
 		this->hWndGroupBoxConfig = CreateWindowExW(
@@ -145,12 +141,12 @@ namespace App
 			52,
 			22,
 			hWnd,
-			NULL,
+			(HMENU) BTN_START,
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
 
-		this->hWndBtnStart = CreateWindowExW(
+		this->hWndBtnStop = CreateWindowExW(
 			0,
 			L"BUTTON",
 			L"STOP",
@@ -160,7 +156,7 @@ namespace App
 			52,
 			22,
 			hWnd,
-			NULL,
+			(HMENU)BTN_STOP,
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
@@ -292,26 +288,60 @@ namespace App
 		);
 	}
 
+	void App::WndMain::updateControls(HWND parent)
+	{
+		if (App::AutoClickController::getInstance()->getIsRunning())
+		{
+			EnableWindow(this->hWndBtnStart, FALSE);
+			EnableWindow(this->hWndBtnStop, TRUE);
+		}
+		else
+		{
+			EnableWindow(this->hWndBtnStart, TRUE);
+			EnableWindow(this->hWndBtnStop, FALSE);
+		}
+	}
+
+
 	LRESULT CALLBACK App::WndMain::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		OutputDebugStringW(std::to_wstring(message).append(L" ").c_str());
 		switch (message)
 		{
 			case WM_COMMAND:
-				
-				if (HIWORD(wParam) == 0)
+				if (LOWORD(wParam) == MNU_ABOUT)
 				{
-					// MENU COMMANDS
-
-					if (LOWORD(wParam) == 100)
-					{
-						this->openAboutDialog();
-					}
+					this->onMnuAboutClick();
 				}
-
+				else if (LOWORD(wParam) == BTN_START)
+				{
+					this->onBtnStartClick();
+				}
+				else if (LOWORD(wParam) == BTN_STOP)
+				{
+					this->onBtnStopClick();
+				}
 				break;
 
 			default:
 				return View::wndProc(hWnd, message, wParam, lParam);
 		}
+	}
+
+	void App::WndMain::onMnuAboutClick()
+	{
+		App::AutoClickController::getInstance()->start();
+	}
+
+	void App::WndMain::onBtnStartClick()
+	{
+		App::AutoClickController::getInstance()->start();
+		this->updateControls(this->getHandle());
+	}
+
+	void App::WndMain::onBtnStopClick()
+	{
+		App::AutoClickController::getInstance()->stop();
+		this->updateControls(this->getHandle());
 	}
 }
