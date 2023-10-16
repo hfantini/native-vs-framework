@@ -101,6 +101,8 @@ namespace App
 
 	void App::WndMain::createControls(HWND hWnd)
 	{
+		// == GROUP BOX: Configuration
+
 		this->hWndGroupBoxConfig = CreateWindowExW(
 			0,
 			L"BUTTON", 
@@ -115,6 +117,8 @@ namespace App
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
+
+		// == GROUP BOX: Shortcuts
 
 		this->hWndGroupBoxShortcut = CreateWindowExW(
 			0,
@@ -131,6 +135,8 @@ namespace App
 			NULL
 		);
 
+		// == BUTTON: Start
+
 		this->hWndBtnStart = CreateWindowExW(
 			0,
 			L"BUTTON",
@@ -145,6 +151,8 @@ namespace App
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
+		
+		// == BUTTON: Stop
 
 		this->hWndBtnStop = CreateWindowExW(
 			0,
@@ -160,6 +168,8 @@ namespace App
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
+
+		// == LABEL: Start
 
 		this->hWndLabelShortcutF9 = CreateWindowExW
 		(
@@ -177,7 +187,9 @@ namespace App
 			NULL
 		);
 
-		this->hWndLabelShortcutF9 = CreateWindowExW
+		// == LABEL: Stop
+
+		this->hWndLabelShortcutF10 = CreateWindowExW
 		(
 			NULL,
 			L"STATIC",
@@ -192,6 +204,8 @@ namespace App
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
+
+		// == LABEL: Button
 
 		this->hWndLabelButton = CreateWindowExW
 		(
@@ -209,6 +223,8 @@ namespace App
 			NULL
 		);
 
+		// == COMBOBOX: Button
+
 		this->hWndComboButton = CreateWindowExW(
 			WS_EX_CLIENTEDGE, 
 			L"COMBOBOX",
@@ -222,6 +238,23 @@ namespace App
 			NULL, 
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL);
+
+		// ADDING DEFAULT VALUES
+
+		TCHAR aux[16];
+		memset(&aux, 0, sizeof(aux));
+
+		for (int count = 0; count < sizeof(this->cmbButtonValues) / sizeof(this->cmbButtonValues[0]) ; count++)
+		{
+			strcpy_s(aux, sizeof(aux) / sizeof(TCHAR), (TCHAR*)this->cmbButtonValues[count]);
+			SendMessage(this->hWndComboButton, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) aux);
+		}
+
+		// SETTING INITIAL VALUE
+
+		SendMessage(this->hWndComboButton, (UINT) CB_SETCURSEL, (WPARAM) 0, (LPARAM) 0);
+
+		// == LABEL: Interval
 
 		this->hWndLabelInterval = CreateWindowExW
 		(
@@ -239,6 +272,8 @@ namespace App
 			NULL
 		);
 
+		// == EDIT: Interval
+
 		this->hWndEditInterval = CreateWindowExW
 		(
 			WS_EX_CLIENTEDGE | WS_EX_LEFT | WS_EX_LTRREADING,
@@ -255,6 +290,12 @@ namespace App
 			NULL
 		);
 
+		// ADDING DEFAULT VALUE
+
+		SetWindowTextW(this->hWndEditInterval, L"100");
+
+		// == LABEL: Ms
+
 		this->hWndLabelMS = CreateWindowExW
 		(
 			NULL,
@@ -270,6 +311,8 @@ namespace App
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 			NULL
 		);
+
+		// == LABEL: Horizontal Line
 
 		this->hWndHorizontalLine = CreateWindowExW
 		(

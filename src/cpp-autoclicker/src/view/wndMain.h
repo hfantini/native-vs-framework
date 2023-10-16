@@ -36,6 +36,13 @@ namespace App
 			HWND hWndLabelMS = NULL;
 			HWND hWndHorizontalLine = NULL;
 
+			TCHAR cmbButtonValues[3][10] =
+			{
+				"LEFT",
+				"MIDDLE",
+				"RIGHT"
+			};
+
 		protected:
 
 			virtual void createControls(HWND parent);
