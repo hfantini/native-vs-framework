@@ -3,7 +3,18 @@
 #include "./helpers/win32Helpers.h";
 #include "./view/wndMain.h";
 
+HHOOK keyboardHookId;
 std::unique_ptr<App::WndMain> wndMain;
+
+LRESULT CALLBACK hookKeyboardProc(const int code, const WPARAM wParam, const LPARAM lParam)
+{
+	if (wndMain)
+	{
+		wndMain->keyboardHookProc(code, wParam, lParam);
+	}
+
+	return CallNextHookEx(keyboardHookId, code, wParam, lParam);
+}
 
 int run(HINSTANCE instance)
 {
@@ -15,6 +26,9 @@ int run(HINSTANCE instance)
 		wndMain->createWindow();
 		wndMain->show();
 		wndMain->update();
+
+		// CREATING KEYBOARD HOOK
+		keyboardHookId = SetWindowsHookEx(WH_KEYBOARD_LL, hookKeyboardProc, instance, 0);
 
 		MSG message;
 		while (GetMessage(&message, NULL, 0, 0) > 0)
@@ -35,6 +49,12 @@ int run(HINSTANCE instance)
 
 		MessageBoxW(NULL, wss.str().c_str(), L"Error!", MB_OK);
 		return 1;
+	}
+
+	// REMOVING WINDOW HOOK
+	if (keyboardHookId)
+	{
+		UnhookWindowsHookEx(keyboardHookId);
 	}
 }
 

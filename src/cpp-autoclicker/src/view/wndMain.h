@@ -1,4 +1,5 @@
 #include "view.h";
+#include "../structs/AutoClickControllerConfig.h";
 
 #define MNU_ABOUT 0x100
 #define BTN_START 0x200
@@ -20,6 +21,7 @@ namespace App
 			virtual void createMenu();
 			virtual void createWindow();
 			virtual void destroy();
+			void keyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 		private:
 			HMENU hMenuHelp = NULL;
@@ -48,6 +50,7 @@ namespace App
 			virtual void createControls(HWND parent);
 			virtual void updateControls(HWND parent);
 			virtual LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+			App::AutoClickControllerConfig createControllerConfig();
 			void onMnuAboutClick();
 			void onBtnStartClick();
 			void onBtnStopClick();

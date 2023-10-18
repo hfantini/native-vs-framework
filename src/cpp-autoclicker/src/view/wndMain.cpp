@@ -1,5 +1,7 @@
 #include <iostream>;
 #include <sstream>;
+#include <string>;
+#include <stdlib.h>
 #include "windows.h"
 #include "wndMain.h";
 #include "../controler/AutoClickController.h";
@@ -8,7 +10,7 @@ namespace App
 {
 	App::WndMain::WndMain(HINSTANCE hInstance) : App::View(hInstance, L"WndMain")
 	{
-
+		
 	}
 
 	App::WndMain::~WndMain()
@@ -229,11 +231,11 @@ namespace App
 			WS_EX_CLIENTEDGE, 
 			L"COMBOBOX",
 			L"Button",
-			CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+			CBS_DROPDOWN | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
 			30, 
 			55, 
 			130, 
-			22, 
+			200, 
 			hWnd, 
 			NULL, 
 			(HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
@@ -241,13 +243,9 @@ namespace App
 
 		// ADDING DEFAULT VALUES
 
-		TCHAR aux[16];
-		memset(&aux, 0, sizeof(aux));
-
 		for (int count = 0; count < sizeof(this->cmbButtonValues) / sizeof(this->cmbButtonValues[0]) ; count++)
 		{
-			strcpy_s(aux, sizeof(aux) / sizeof(TCHAR), (TCHAR*)this->cmbButtonValues[count]);
-			SendMessage(this->hWndComboButton, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) aux);
+			SendMessage(this->hWndComboButton, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) this->cmbButtonValues[count]);
 		}
 
 		// SETTING INITIAL VALUE
@@ -335,23 +333,36 @@ namespace App
 	{
 		if (App::AutoClickController::getInstance()->getIsRunning())
 		{
+			EnableWindow(this->hWndComboButton, FALSE);
+			EnableWindow(this->hWndEditInterval, FALSE);
 			EnableWindow(this->hWndBtnStart, FALSE);
 			EnableWindow(this->hWndBtnStop, TRUE);
 		}
 		else
 		{
+			EnableWindow(this->hWndComboButton, TRUE);
+			EnableWindow(this->hWndEditInterval, TRUE);
 			EnableWindow(this->hWndBtnStart, TRUE);
 			EnableWindow(this->hWndBtnStop, FALSE);
 		}
+
+		// SYNCING WITH CONFIG
+
+		App:AutoClickControllerConfig config = App::AutoClickController::getInstance()->getConfig();
+		
+		SendMessage(this->hWndComboButton, (UINT) CB_SETCURSEL, (WPARAM) config.button, (LPARAM) 0);
+		std::stringstream sstr;
+		sstr << config.interval;
+		SetWindowTextA(this->hWndEditInterval, sstr.str().c_str());
 	}
 
 
 	LRESULT CALLBACK App::WndMain::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		OutputDebugStringW(std::to_wstring(message).append(L" ").c_str());
 		switch (message)
 		{
 			case WM_COMMAND:
+
 				if (LOWORD(wParam) == MNU_ABOUT)
 				{
 					this->onMnuAboutClick();
@@ -371,6 +382,52 @@ namespace App
 		}
 	}
 
+	App::AutoClickControllerConfig App::WndMain::createControllerConfig()
+	{
+		App:AutoClickControllerConfig retValue = App::AutoClickController::getInstance()->getConfig();
+
+		// BUTTON
+
+		retValue.button = SendMessage(this->hWndComboButton, CB_GETCURSEL, (WPARAM) 0, (LPARAM) 0);
+
+		// INTERVAL
+
+		try
+		{
+			char text[1024];
+			GetWindowText(this->hWndEditInterval, text, sizeof(text));
+
+			std::stringstream sstr;
+			sstr.exceptions(std::ios::failbit);
+
+			sstr << text;
+			sstr >> retValue.interval;
+		}
+		catch (std::exception& e)
+		{
+			// DO NOTHING
+		}
+
+		return retValue;
+	}
+
+	void App::WndMain::keyboardHookProc(int code, WPARAM wParam, LPARAM lParam)
+	{
+		if (code >= 0 && wParam == WM_KEYDOWN)
+		{
+			KBDLLHOOKSTRUCT* kbdStruct = (KBDLLHOOKSTRUCT*) lParam;
+
+			if (kbdStruct->vkCode == VK_F9)
+			{
+				this->onBtnStartClick();
+			}
+			else if (kbdStruct->vkCode == VK_F10)
+			{
+				this->onBtnStopClick();
+			}
+		}
+	}
+
 	void App::WndMain::onMnuAboutClick()
 	{
 		App::AutoClickController::getInstance()->start();
@@ -378,6 +435,7 @@ namespace App
 
 	void App::WndMain::onBtnStartClick()
 	{
+		App::AutoClickController::getInstance()->setConfig(this->createControllerConfig());
 		App::AutoClickController::getInstance()->start();
 		this->updateControls(this->getHandle());
 	}

@@ -1,4 +1,5 @@
 #include <thread>
+#include "../structs/AutoClickControllerConfig.h";
 
 #ifndef CLASS_AUTOCLICKCONTROLLER
 #define CLASS_AUTOCLICKCONTROLLER
@@ -8,6 +9,7 @@ namespace App
 	static class AutoClickController
 	{
 		public:
+
 			AutoClickController();
 			~AutoClickController();
 
@@ -15,6 +17,9 @@ namespace App
 
 			void start();
 			void stop();
+
+			App::AutoClickControllerConfig getConfig();
+			void setConfig(App::AutoClickControllerConfig config);
 			BOOL getIsRunning();
 
 		private:
@@ -25,6 +30,7 @@ namespace App
 
 		protected:
 
+			App::AutoClickControllerConfig config;
 			void run();
 	};
 }
