@@ -60,8 +60,33 @@ void App::AutoClickController::run()
 	{
 		try
 		{
-			OutputDebugStringW(L"Pulando Amarelinha...");
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			// CLICK
+
+			POINT cursor;
+			
+			if (GetCursorPos(&cursor))
+			{
+				DWORD action = 0;
+
+				if (this->getConfig().button == 0)
+				{
+					action = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
+				}
+				else if (this->getConfig().button == 1)
+				{
+					action = MOUSEEVENTF_MIDDLEDOWN | MOUSEEVENTF_MIDDLEUP;
+				}
+				else if (this->getConfig().button == 2)
+				{
+					action = MOUSEEVENTF_RIGHTDOWN | MOUSEEVENTF_RIGHTUP;
+				}
+
+				mouse_event(action, cursor.x, cursor.y, 0, 0);
+			}
+			
+			// INTERVAL
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(this->getConfig().interval));
 		}
 		catch (std::exception& e)
 		{

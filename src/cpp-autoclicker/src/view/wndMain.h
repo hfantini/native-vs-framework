@@ -1,4 +1,5 @@
 #include "view.h";
+#include "wndAbout.h";
 #include "../structs/AutoClickControllerConfig.h";
 
 #define MNU_ABOUT 0x100
@@ -10,7 +11,6 @@
 
 namespace App
 {
-
 	class WndMain : public App::View
 	{
 		public:
@@ -46,6 +46,8 @@ namespace App
 			};
 
 		protected:
+
+			WndAbout* wndAbout;
 
 			virtual void createControls(HWND parent);
 			virtual void updateControls(HWND parent);

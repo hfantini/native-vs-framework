@@ -10,11 +10,16 @@ namespace App
 {
 	App::WndMain::WndMain(HINSTANCE hInstance) : App::View(hInstance, L"WndMain")
 	{
-		
+		this->wndAbout = NULL;
 	}
 
 	App::WndMain::~WndMain()
 	{
+		if (this->wndAbout != NULL)
+		{
+			delete this->wndAbout;
+		}
+
 		this->destroy();
 	}
 
@@ -430,7 +435,15 @@ namespace App
 
 	void App::WndMain::onMnuAboutClick()
 	{
-		App::AutoClickController::getInstance()->start();
+		if (this->wndAbout == NULL)
+		{
+			this->wndAbout = new WndAbout(this->hInstance, this->hWnd);
+			this->wndAbout->reg();
+			this->wndAbout->createWindow();
+		}
+
+		this->wndAbout->show();
+		this->wndAbout->update();
 	}
 
 	void App::WndMain::onBtnStartClick()
