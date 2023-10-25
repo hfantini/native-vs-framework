@@ -5,12 +5,8 @@
 #include <chrono>
 #include "AutoClickController.h";
 
-App::AutoClickController* App::AutoClickController::_instance = nullptr;
-
 App::AutoClickController::AutoClickController()
 {
-	App::AutoClickController::_instance = NULL;
-
 	this->config = {
 		0,
 		100
@@ -20,7 +16,6 @@ App::AutoClickController::AutoClickController()
 App::AutoClickController::~AutoClickController()
 {
 	this->stop();
-	delete this->_thread;
 }
 
 void App::AutoClickController::start()
@@ -41,6 +36,12 @@ void App::AutoClickController::stop()
 		if (this->_thread->joinable())
 		{
 			this->_thread->join();
+		}
+
+		if (this->_thread != NULL)
+		{
+			delete this->_thread;
+			this->_thread = NULL;
 		}
 	};
 }

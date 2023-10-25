@@ -30,9 +30,8 @@ namespace App
 
 		private:
 
-			static AutoClickController* _instance;
 			BOOL isRunning = FALSE;
-			std::thread* _thread;
+			std::thread* _thread = NULL;
 
 		protected:
 

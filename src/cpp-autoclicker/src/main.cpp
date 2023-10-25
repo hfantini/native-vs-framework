@@ -12,11 +12,11 @@
 #include "./view/wndMain.h";
 
 HHOOK keyboardHookId;
-std::unique_ptr<App::WndMain> wndMain;
+App::WndMain* wndMain;
 
 LRESULT CALLBACK hookKeyboardProc(const int code, const WPARAM wParam, const LPARAM lParam)
 {
-	if (wndMain)
+	if (wndMain != NULL)
 	{
 		wndMain->keyboardHookProc(code, wParam, lParam);
 	}
@@ -28,7 +28,7 @@ int run(HINSTANCE instance)
 {
 	try
 	{
-		wndMain = std::make_unique<App::WndMain>(instance);
+		wndMain = new App::WndMain(instance);
 		wndMain->reg();
 		wndMain->createMenu();
 		wndMain->createWindow();
@@ -45,6 +45,7 @@ int run(HINSTANCE instance)
 			DispatchMessage(&message);
 		}
 
+		delete wndMain;
 		return 0;
 	}
 	catch (std::exception e)
