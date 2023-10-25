@@ -1,5 +1,14 @@
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include "view.h";
 #include "wndAbout.h";
+#include "../controler/AutoClickController.h";
 #include "../structs/AutoClickControllerConfig.h";
 
 #define MNU_ABOUT 0x100
@@ -24,6 +33,8 @@ namespace App
 			void keyboardHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 		private:
+
+			HICON hIcon = NULL;
 			HMENU hMenuHelp = NULL;
 			HWND hWndGroupBoxConfig = NULL;
 			HWND hWndGroupBoxShortcut = NULL;
@@ -47,6 +58,7 @@ namespace App
 
 		protected:
 
+			App::AutoClickController* controller = NULL;
 			WndAbout* wndAbout;
 
 			virtual void createControls(HWND parent);

@@ -1,4 +1,11 @@
-#include <iostream>;
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include <sstream>;
 #include <string>;
 #include <stdlib.h>
@@ -10,14 +17,22 @@ namespace App
 {
 	App::WndMain::WndMain(HINSTANCE hInstance) : App::View(hInstance, L"WndMain")
 	{
+		this->controller = new App::AutoClickController();
 		this->wndAbout = NULL;
 	}
 
 	App::WndMain::~WndMain()
 	{
+		if (this->controller != NULL)
+		{
+			delete this->controller;
+			this->controller = NULL;
+		}
+
 		if (this->wndAbout != NULL)
 		{
 			delete this->wndAbout;
+			this->wndAbout = NULL;
 		}
 
 		this->destroy();
@@ -36,7 +51,8 @@ namespace App
 			wc.cbClsExtra = 0;
 			wc.cbWndExtra = 0;
 			wc.hInstance = this->hInstance;
-			wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			wc.hIconSm = NULL;
+			wc.hIcon = NULL;
 			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 			wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
 			wc.lpszMenuName = NULL;
@@ -102,12 +118,26 @@ namespace App
 		DestroyWindow(this->hWndEditInterval);
 		DestroyWindow(this->hWndLabelMS);
 		DestroyWindow(this->hWndHorizontalLine);
+		DeleteObject(this->hIcon);
 
 		App::View::destroy();
 	}
 
 	void App::WndMain::createControls(HWND hWnd)
 	{
+		this->hIcon = (HICON)LoadImageW
+		(
+			NULL,
+			L"./res/icons/icon.ico",
+			IMAGE_ICON,
+			0,
+			0,
+			LR_LOADFROMFILE | LR_DEFAULTSIZE
+		);
+
+		SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)this->hIcon);
+		SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)this->hIcon);
+
 		// == GROUP BOX: Configuration
 
 		this->hWndGroupBoxConfig = CreateWindowExW(
@@ -336,7 +366,7 @@ namespace App
 
 	void App::WndMain::updateControls(HWND parent)
 	{
-		if (App::AutoClickController::getInstance()->getIsRunning())
+		if (this->controller->getIsRunning())
 		{
 			EnableWindow(this->hWndComboButton, FALSE);
 			EnableWindow(this->hWndEditInterval, FALSE);
@@ -353,7 +383,7 @@ namespace App
 
 		// SYNCING WITH CONFIG
 
-		App:AutoClickControllerConfig config = App::AutoClickController::getInstance()->getConfig();
+		App:AutoClickControllerConfig config = this->controller->getConfig();
 		
 		SendMessage(this->hWndComboButton, (UINT) CB_SETCURSEL, (WPARAM) config.button, (LPARAM) 0);
 		std::stringstream sstr;
@@ -389,7 +419,7 @@ namespace App
 
 	App::AutoClickControllerConfig App::WndMain::createControllerConfig()
 	{
-		App:AutoClickControllerConfig retValue = App::AutoClickController::getInstance()->getConfig();
+		App:AutoClickControllerConfig retValue = this->controller->getConfig();
 
 		// BUTTON
 
@@ -448,14 +478,14 @@ namespace App
 
 	void App::WndMain::onBtnStartClick()
 	{
-		App::AutoClickController::getInstance()->setConfig(this->createControllerConfig());
-		App::AutoClickController::getInstance()->start();
+		this->controller->setConfig(this->createControllerConfig());
+		this->controller->start();
 		this->updateControls(this->getHandle());
 	}
 
 	void App::WndMain::onBtnStopClick()
 	{
-		App::AutoClickController::getInstance()->stop();
+		this->controller->stop();
 		this->updateControls(this->getHandle());
 	}
 }

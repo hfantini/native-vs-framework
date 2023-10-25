@@ -19,20 +19,8 @@ App::AutoClickController::AutoClickController()
 
 App::AutoClickController::~AutoClickController()
 {
-	if (App::AutoClickController::_instance != NULL)
-	{
-		delete App::AutoClickController::_instance;
-	}
-}
-
-App::AutoClickController* App::AutoClickController::getInstance()
-{
-	if (App::AutoClickController::_instance == NULL)
-	{
-		App::AutoClickController::_instance = new App::AutoClickController();
-	}
-
-	return App::AutoClickController::_instance;
+	this->stop();
+	delete this->_thread;
 }
 
 void App::AutoClickController::start()
@@ -40,7 +28,7 @@ void App::AutoClickController::start()
 	if (!this->getIsRunning())
 	{
 		this->isRunning = TRUE;
-		this->_thread = std::make_unique<std::thread>( [this]() { this->run(); });
+		this->_thread = new std::thread( [this]() { this->run(); });
 	}
 }
 
@@ -49,8 +37,11 @@ void App::AutoClickController::stop()
 	if (this->getIsRunning())
 	{
 		this->isRunning = FALSE;
-		this->_thread->join();
-		this->_thread.reset(nullptr);
+
+		if (this->_thread->joinable())
+		{
+			this->_thread->join();
+		}
 	};
 }
 

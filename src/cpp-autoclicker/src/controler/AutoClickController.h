@@ -1,3 +1,11 @@
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include <thread>
 #include "../structs/AutoClickControllerConfig.h";
 
@@ -13,8 +21,6 @@ namespace App
 			AutoClickController();
 			~AutoClickController();
 
-			static AutoClickController* getInstance();
-
 			void start();
 			void stop();
 
@@ -26,7 +32,7 @@ namespace App
 
 			static AutoClickController* _instance;
 			BOOL isRunning = FALSE;
-			std::unique_ptr<std::thread> _thread;
+			std::thread* _thread;
 
 		protected:
 

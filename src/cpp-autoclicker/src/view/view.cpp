@@ -1,3 +1,11 @@
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include "windows.h";
 #include "view.h";
 
@@ -62,8 +70,13 @@ namespace App
 		switch (message)
 		{
 			case WM_CREATE:
+				this->onCreateWindow();
 				this->createControls(hWnd);
 				this->updateControls(hWnd);
+				break;
+
+			case WM_PAINT:
+				this->paint();
 				break;
 
 			case WM_CLOSE:

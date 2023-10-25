@@ -47,8 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="model\AutoClickerConfiguration.cs" />
-    <Compile Include="model\MouseButton.cs" />
+    <Compile Include="dto\AutoClickerConfiguration.cs" />
+    <Compile Include="dto\MouseButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="controller\AutoClickerController.cs" />
     <Compile Include="view\WndAbout.cs">

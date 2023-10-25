@@ -1,3 +1,11 @@
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include <sstream>
 #include <windows.h>
 #include "./helpers/win32Helpers.h";
@@ -37,7 +45,6 @@ int run(HINSTANCE instance)
 			DispatchMessage(&message);
 		}
 
-		wndMain->destroy();
 		return 0;
 	}
 	catch (std::exception e)
@@ -74,6 +81,10 @@ int APIENTRY wWinMain(
 	{
 		retValue = code;
 	}
+
+	#ifdef _DEBUG
+		_CrtDumpMemoryLeaks();
+	#endif
 
 	return retValue;
 }

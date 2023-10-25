@@ -1,3 +1,11 @@
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+	#include<iostream>
+	#include <crtdbg.h>
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif
+
 #include <string>
 #include <windows.h>
 #include <memory>
@@ -15,6 +23,7 @@ namespace App
 			virtual void reg() {};
 			virtual void createMenu() {};
 			virtual void createWindow() {};
+			virtual void paint() {};
 			virtual void show();
 			virtual void update();
 			virtual void hide();
@@ -24,14 +33,17 @@ namespace App
 			HWND getHandle();
 		private:
 		protected:
-			virtual void createControls(HWND parent) {};
-			virtual void updateControls(HWND parent) {};
-			static LRESULT CALLBACK staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-			virtual LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 			std::wstring className;
 			HMENU hMenu;
 			HINSTANCE hInstance;
 			HWND hWnd;
+
+			virtual void onCreateWindow() {};
+			virtual void createControls(HWND parent) {};
+			virtual void updateControls(HWND parent) {};
+
+			virtual LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+			static LRESULT CALLBACK staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	};
 }
 
